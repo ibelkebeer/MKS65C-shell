@@ -13,11 +13,11 @@ static void sighandler(int signo){
 
 char ** parse_args(char* line){
   char** ary = calloc(20, sizeof(char*));
-  int i = 0;
+  int i;
   char * k;
   char * m = " ";
   int ctr = 0;
-  for(i; i < 20; i++){
+  for(i = 0; i < 20; i++){
     k = strsep(&line, " ");
     ary[i] = k;
   }
@@ -30,14 +30,18 @@ int main(){
   while(1){
     printf("Enter command: ");
     scanf("%[^\n]", command);
+    getchar();
     line = parse_args(command);
-    if(line[0] == "exit"){
+    if(strcmp(line[0], "exit") == 0){
       return 0;
     }
     int f = fork();
     if(!f){
       execvp(line[0], line);
       return 0;
+    }else{
+      int status;
+      wait(&status);
     }
     line = NULL;
     strcpy(command, "");
