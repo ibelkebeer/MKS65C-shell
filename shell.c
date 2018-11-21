@@ -32,21 +32,40 @@ int main(){
     line = parse_args(command);
     if(strcmp(line[0], "exit") == 0){
       return 0;
-    }
-    if(strcmp(line[0], "cd") == 0){
+    }else if(strcmp(line[0], "cd") == 0){
       if(chdir(line[1]) == -1){
 	printf("Error: %s\n", strerror(errno));
       }
-    }
-    int f = fork();
-    if(!f){
-      if(execvp(line[0], line) == -1){
-	printf("Error: %s\n", strerror(errno));
-      }
-      return 0;
     }else{
-      int status;
-      wait(&status);
+      int f = fork();
+      if(!f){
+	char** cur = calloc(20, sizeof(char));
+	int i;
+	int temp;
+	for(i = 0; i < 20; i++){
+	  if(strcmp(line[i], ";") == 0){
+	    temp = fork();
+	    if(!f){
+	      if(execvp(cur[0], cur) == -1){
+		printf("Error: %s\n", strerror(errno));
+	      }
+	    }else{
+	      int status;
+	      wait(&status);
+	    }
+	  }else if(!(line[i])){
+	    if(execvp(cur[0], cur) == -1){
+	      printf("Error: %s\n", strerror(errno));
+	    }
+	  }else{
+	    cur[i] = line[i];
+	  }
+	  return 0;
+	}
+      }else{
+	int status;
+	wait(&status);
+      }
     }
     line = NULL;
     strcpy(command, "");
