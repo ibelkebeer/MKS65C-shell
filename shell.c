@@ -8,9 +8,6 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-static void sighandler(int signo){
-}
-
 char ** parse_args(char* line){
   char** ary = calloc(20, sizeof(char*));
   int i;
@@ -26,18 +23,26 @@ char ** parse_args(char* line){
 
 int main(){
   char** line;
-  char command[256];
+  char command[256];\
+  char dir[256];
   while(1){
-    printf("Enter command: ");
+    printf("%s$ ", getcwd(dir, sizeof(dir)));
     scanf("%[^\n]", command);
     getchar();
     line = parse_args(command);
     if(strcmp(line[0], "exit") == 0){
       return 0;
     }
+    if(strcmp(line[0], "cd") == 0){
+      if(chdir(line[1]) == -1){
+	printf("Error: %s\n", strerror(errno));
+      }
+    }
     int f = fork();
     if(!f){
-      execvp(line[0], line);
+      if(execvp(line[0], line) == -1){
+	printf("Error: %s\n", strerror(errno));
+      }
       return 0;
     }else{
       int status;
