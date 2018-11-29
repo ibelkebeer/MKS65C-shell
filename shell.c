@@ -8,18 +8,32 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-char ** parse_args(char* line){
-  char** ary = calloc(20, sizeof(char*));
-  int i;
+char ** parse_args_semicolon(char* line){
+  char** ary = calloc(20, sizeof(char**));
+  int i = 0;
   char * k;
-  for(i = 0; i < 20; i++){
-    k = strsep(&line, " ");
+  while((k = strsep(&line, ";"))){
     ary[i] = k;
+    i++;
+  }
+  return ary;
+}
+
+char ** parse_args_space(char* line){
+  char** ary = calloc(20, sizeof(char*));
+  int i = 0;
+  char * k;
+  while((k = strsep(&line, " "))){
+    if(strcmp(k, "")){
+      ary[i] = k;
+      i++;
+    }
   }
   return ary;
 }
 
 int main(){
+  char** input;
   char** line;
   char command[256];
   char dir[256];
@@ -27,67 +41,34 @@ int main(){
     printf("%s$ ", getcwd(dir, sizeof(dir)));
     scanf("%[^\n]", command);
     getchar();
-    line = parse_args(command);
-    if(strcmp(line[0], "exit") == 0){
-      return 0;
-    }else if(strcmp(line[0], "cd") == 0){
-      if(chdir(line[1]) == -1){
-	printf("Error: %s\n", strerror(errno));
-      }
-    }else{
-      char** cur = calloc(20, sizeof(char));
-      int x = 0;
-      for(int i = 0; i < 20; i ++){
-	if(!(line[i])){
-	  if(strcmp(cur[0], "exit") == 0){
-	    return 0;
-	  }else if(strcmp(cur[0], "cd") == 0){
-	    if(chdir(cur[1]) == -1){
-	      printf("Error: %s\n", strerror(errno));
-	    }
-	  }else{
-	    int f = fork();
-	    if(!f){
-	      if(execvp(cur[0], cur) == -1){
-		printf("Error: %s\n", strerror(errno));
-	      }
-	      return 0;
-	    }else{
-	      int status;
-	      wait(&status);
-	    }
-	    i = 20;
-	    free(cur);
-	  }
-	}else if(strcmp(line[i], ";") == 0){
-	  if(strcmp(cur[0], "exit") == 0){
-	    return 0;
-	  }else if(strcmp(cur[0], "cd") == 0){
-	    if(chdir(cur[1]) == -1){
-	      printf("Error: %s\n", strerror(errno));
-	    }
-	  }else{
-	    int f = fork();
-	    if(!f){
-	      if(execvp(cur[0], cur) == -1){
-		printf("Error: %s\n", strerror(errno));
-	      }
-	      return 0;
-	    }else{
-	      int status;
-	      wait(&status);
-	    }
-	    free(cur);
-	    cur = calloc(20, sizeof(char));
-	    x = 0;
+    input = parse_args_semicolon(command);
+    //printf("%s\n", input[0]);
+    //printf("%s\n", input[1]);
+    for(int num = 0; num < 20; num++){
+      if(input[num]){
+	//printf("%s\n", input[num]);
+	line = parse_args_space(input[num]);
+	//printf("%s\n", line[0]);
+	if(strcmp(line[0], "exit") == 0){
+	  return 0;
+	}else if(strcmp(line[0], "cd") == 0){
+	  if(chdir(line[1]) == -1){
+	    printf("Error: %s\n", strerror(errno));
 	  }
 	}else{
-	  cur[x] = line[i];
-	  x++;
+	  int f = fork();
+	  if(!f){
+	    if(execvp(line[0], line) == -1){
+	      printf("Error: %s\n", strerror(errno));
+	    }
+	    return 0;
+	  }else{
+	    int status;
+	    wait(&status);
+	  }
 	}
       }
-    }
-    line = NULL;
+    }    
     strcpy(command, "");
   }
 }
