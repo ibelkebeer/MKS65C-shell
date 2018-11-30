@@ -42,13 +42,9 @@ int main(){
     scanf("%[^\n]", command);
     getchar();
     input = parse_args_semicolon(command);
-    //printf("%s\n", input[0]);
-    //printf("%s\n", input[1]);
     for(int num = 0; num < 20; num++){
       if(input[num]){
-	//printf("%s\n", input[num]);
 	line = parse_args_space(input[num]);
-	//printf("%s\n", line[0]);
 	if(strcmp(line[0], "exit") == 0){
 	  return 0;
 	}else if(strcmp(line[0], "cd") == 0){
