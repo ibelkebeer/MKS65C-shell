@@ -14,7 +14,7 @@ Redirecting using <<
 Piping causes program to terminate
 
 # Function Headers
-'''
+'''C
 Takes a command line prompt as an input
 Seperates line at ; and places each command in a char* ary
 returns char* ary
