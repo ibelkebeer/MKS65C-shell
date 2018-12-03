@@ -153,15 +153,14 @@ void redirect_pipe(char** line){
       if(execvp(command1[0], command1) == -1){
 	printf("Error: %s\n", strerror(errno));
       }
-      exit(0);
     }else{
       close(fds[1]);
-      wait(NULL);
       dup2(fds[0], 0);
       if(execvp(command2[0], command2) == -1){
 	printf("Error: %s\n", strerror(errno));
       }
     }
+    exit(0);
   }else{
     int status;
     wait(&status);
@@ -175,9 +174,11 @@ int main(){
   char dir[256];
   int i;
   int j;
+  int run;
   while(1){
     printf("%s$ ", getcwd(dir, sizeof(dir)));
     scanf("%[^\n]", command);
+    printf("%s\n", command);
     getchar();
     input = parse_args_semicolon(command);
     for(i = 0; i < 20; i ++){
@@ -190,7 +191,7 @@ int main(){
 	    printf("Error: %s\n", strerror(errno));
 	  }
 	}else{
-	  int run = 0;
+	  run = 0;
 	  for(j = 0; j < 20; j ++){
 	    if(line[j]){
 	      if(!(strcmp(line[j],">"))){
@@ -223,9 +224,9 @@ int main(){
 	      wait(&status);
 	    }
 	  }
-	  run = 0;
 	}
       }
-    } 
+    }
+    strcpy(command, "");
   }
 }
