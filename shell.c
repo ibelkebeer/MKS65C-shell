@@ -140,32 +140,24 @@ void redirect_pipe(char** line){
     y++;
     i++;
   }
+  int fds[2];
+  if(pipe(fds) == -1){
+    printf("Error: %s\n", strerror(errno));
+  }
   int f = fork();
   if(f){
-    int fds[2];
-    if(pipe(fds) == -1){
+    close(fds[0]);
+    dup2(fds[1], 1);
+    if(execvp(command1[0], command1) == -1){
       printf("Error: %s\n", strerror(errno));
     }
-    f = fork();
-    if(f){
-      close(fds[0]);
-      dup2(fds[1], 1);
-      if(execvp(command1[0], command1) == -1){
-	printf("Error: %s\n", strerror(errno));
-      }
-    }else{
-      close(fds[1]);
-      dup2(fds[0], 0);
-      if(execvp(command2[0], command2) == -1){
-	printf("Error: %s\n", strerror(errno));
-      }
-    }
-    exit(0);
   }else{
-    int status;
-    wait(&status);
+    close(fds[1]);
+    dup2(fds[0], 0);
+    if(execvp(command2[0], command2) == -1){
+      printf("Error: %s\n", strerror(errno));
+    }
   }
-  getchar();
 }
 
 int main(){
