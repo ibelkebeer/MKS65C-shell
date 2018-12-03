@@ -32,19 +32,157 @@ char ** parse_args_space(char* line){
   return ary;
 }
 
+void redirect_out(char** line, int mode){
+  char** command = calloc(20, sizeof(char*));
+  char* output = calloc(20, sizeof(char));
+  int i = 0;
+  while(i < 20){
+    if(line[i]){
+      if(strcmp(line[i], ">") && strcmp(line[i], ">>")){
+	command[i] = line[i];
+      }else{
+	i++;
+	break;
+      }
+    }
+    i++;
+  }
+  output = line[i];
+  i++;
+  while(line[i]){
+    command[i-2] = line[i];
+    i++;
+  }
+  int y;
+  if(mode){
+    y = open(output, O_WRONLY | O_APPEND | O_CREAT, 0644);  
+  }else{
+    y = open(output, O_WRONLY | O_CREAT, 0644);
+  }
+  if(y == -1){
+    printf("Error; %s\n", strerror(errno));
+  }else{
+    int f = fork();
+    if(!f){
+      dup2(y, 1);
+      if(execvp(command[0], command) == -1){
+	printf("Error: %s\n", strerror(errno));
+	execlp("rm", "rm", output, (char*)NULL);
+      }
+    }else{
+      int status;
+      wait(&status);
+    }
+    close(y);
+  }
+}
+
+void redirect_in(char** line){
+  char** command = calloc(20, sizeof(char*));
+  char* input = calloc(20, sizeof(char));
+  int i = 0;
+  while(i < 20){
+    if(line[i]){
+      if(strcmp(line[i], "<") && strcmp(line[i], "<<")){
+	command[i] = line[i];
+      }else{
+	i++;
+	break;
+      }
+    }
+    i++;
+  }
+  input = line[i];
+  i++;
+  while(line[i]){
+    command[i-2] = line[i];
+    i++;
+  }
+  int y = open(input, O_RDONLY, 0644);  
+  if(y == -1){
+    printf("Error; %s\n", strerror(errno));
+  }else{
+    int f = fork();
+    if(!f){
+      dup2(y, 0);
+      if(execvp(command[0], command) == -1){
+	printf("Error: %s\n", strerror(errno));
+      }
+    }else{
+      int status;
+      wait(&status);
+    }
+    close(y);
+  }
+}
+
+void redirect_pipe(char** line){
+  char** command1 = calloc(20, sizeof(char*));
+  char** command2 = calloc(20, sizeof(char*));
+  int i = 0;
+  while(i < 20){
+    if(line[i]){
+      if(strcmp(line[i], "|")){
+	command1[i] = line[i];
+      }else{
+	i++;
+	break;
+      }
+    }
+    i++;
+  }
+  int y = i;
+  i = 0;
+  while(i < 20){
+    if(line[y]){
+      command2[i] = line[y];
+    }
+    y++;
+    i++;
+  }
+  int f = fork();
+  if(f){
+    int fds[2];
+    if(pipe(fds) == -1){
+      printf("Error: %s\n", strerror(errno));
+    }
+    f = fork();
+    if(f){
+      close(fds[0]);
+      dup2(fds[1], 1);
+      if(execvp(command1[0], command1) == -1){
+	printf("Error: %s\n", strerror(errno));
+      }
+      exit(0);
+    }else{
+      close(fds[1]);
+      wait(NULL);
+      dup2(fds[0], 0);
+      if(execvp(command2[0], command2) == -1){
+	printf("Error: %s\n", strerror(errno));
+      }
+    }
+  }else{
+    int status;
+    wait(&status);
+  }
+}
+
 int main(){
   char** input;
   char** line;
   char command[256];
   char dir[256];
+  int i;
+  int j;
   while(1){
     printf("%s$ ", getcwd(dir, sizeof(dir)));
     scanf("%[^\n]", command);
     getchar();
     input = parse_args_semicolon(command);
-    for(int num = 0; num < 20; num++){
-      if(input[num]){
-	line = parse_args_space(input[num]);
+    for(i = 0; i < 20; i ++){
+      if(input[i]){
+	line = parse_args_space(input[i]);
 	if(strcmp(line[0], "exit") == 0){
 	  return 0;
 	}else if(strcmp(line[0], "cd") == 0){
@@ -52,19 +190,42 @@ int main(){
 	    printf("Error: %s\n", strerror(errno));
 	  }
 	}else{
-	  int f = fork();
-	  if(!f){
-	    if(execvp(line[0], line) == -1){
-	      printf("Error: %s\n", strerror(errno));
+	  int run = 0;
+	  for(j = 0; j < 20; j ++){
+	    if(line[j]){
+	      if(!(strcmp(line[j],">"))){
+		redirect_out(line, 0);
+		run = 1;
+	      }
+	      if(!(strcmp(line[j],">>"))){
+		redirect_out(line, 1);
+		run = 1;
+	      }
+	      if(!(strcmp(line[j],"<"))){
+		redirect_in(line);
+		run = 1;
+	      }
+	      if(!(strcmp(line[j], "|"))){
+		redirect_pipe(line);
+		run = 1;
+	      }
 	    }
-	    return 0;
-	  }else{
-	    int status;
-	    wait(&status);
 	  }
+	  if(!run){
+	    int f = fork();
+	    if(!f){
+	      if(execvp(line[0], line) == -1){
+		printf("Error: %s\n", strerror(errno));
+	      }
+	      return 0;
+	    }else{
+	      int status;
+	      wait(&status);
+	    }
+	  }
+	  run = 0;
 	}
       }
-    }    
-    strcpy(command, "");
+    } 
   }
 }
