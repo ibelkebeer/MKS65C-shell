@@ -14,7 +14,7 @@ Seperates line at ; and places each command in a char* ary
 returns char* ary
  */
 char ** parse_args_semicolon(char* line){
-  char** ary = calloc(20, sizeof(char**));
+  char** ary = calloc(256, sizeof(char**));
   int i = 0;
   char * k;
   while((k = strsep(&line, ";"))){
@@ -30,7 +30,7 @@ Seperates command at spaces and places each delimiter in a char* ary
 returns char* ary
  */
 char ** parse_args_space(char* line){
-  char** ary = calloc(20, sizeof(char*));
+  char** ary = calloc(256, sizeof(char*));
   int i = 0;
   char * k;
   while((k = strsep(&line, " "))){
@@ -49,8 +49,8 @@ Replace stdout with file specified and creates or appends to that file the outpu
 nothing returned
  */
 void redirect_out(char** line, int mode){
-  char** command = calloc(20, sizeof(char*));
-  char* output = calloc(20, sizeof(char));
+  char** command = calloc(256, sizeof(char*));
+  char* output = calloc(256, sizeof(char));
   int i = 0;
   while(i < 20){
     if(line[i]){
@@ -100,8 +100,8 @@ Replaces stdin with file specified and executes command
 nothing returned
  */
 void redirect_in(char** line){
-  char** command = calloc(20, sizeof(char*));
-  char* input = calloc(20, sizeof(char));
+  char** command = calloc(256, sizeof(char*));
+  char* input = calloc(256, sizeof(char));
   int i = 0;
   while(i < 20){
     if(line[i]){
@@ -148,7 +148,7 @@ void redirect_pipe(char** line){
   char** command1 = calloc(20, sizeof(char*));
   char** command2 = calloc(20, sizeof(char*));
   int i = 0;
-  while(i < 20){
+  while(i < 256){
     if(line[i]){
       if(strcmp(line[i], "|")){
 	command1[i] = line[i];
@@ -161,7 +161,7 @@ void redirect_pipe(char** line){
   }
   int y = i;
   i = 0;
-  while(i < 20){
+  while(i < 256){
     if(line[y]){
       command2[i] = line[y];
     }
@@ -216,7 +216,7 @@ int main(){
     scanf("%[^\n]", command);
     getchar();
     input = parse_args_semicolon(command);
-    for(i = 0; i < 20; i ++){
+    for(i = 0; i < 256; i ++){
       if(input[i]){
 	line = parse_args_space(input[i]);
 	if(strcmp(line[0], "exit") == 0){
@@ -227,7 +227,7 @@ int main(){
 	  }
 	}else{
 	  run = 0;
-	  for(j = 0; j < 20; j ++){
+	  for(j = 0; j < 256; j ++){
 	    if(line[j]){
 	      if(!(strcmp(line[j],">"))){
 		redirect_out(line, 0);
