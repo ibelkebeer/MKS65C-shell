@@ -1,17 +1,17 @@
 # MKS65C-shell
 
 # Features
-Executes commands using fork
-Supports multiple commands seperated by ;
-Supports redirecting using >, >>, and <
-Supports piping using |
+Executes commands using fork  
+Supports multiple commands seperated by ;  
+Supports redirecting using >, >>, and <  
+Supports piping using |  
 
 # Attempted
-Using pipe and continuing program
-Redirecting using <<
+Using pipe and continuing program  
+Redirecting using <<  
 
 # Bugs
-Piping causes program to terminate
+Piping causes program to terminate  
 
 # Function Headers
 '''  
