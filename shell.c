@@ -190,7 +190,7 @@ void redirect_pipe(char** line){
 
 static void sighandler(int signo){
   if(signo == 2){
-    printf("Program exited due to SIGINT\n");
+    printf("\nProgram exited due to SIGINT");
     exit(0);
   }
 }
