@@ -8,6 +8,11 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
+/*
+Takes a command line prompt as an input
+Seperates line at ; and places each command in a char* ary
+returns char* ary
+ */
 char ** parse_args_semicolon(char* line){
   char** ary = calloc(20, sizeof(char**));
   int i = 0;
@@ -19,6 +24,11 @@ char ** parse_args_semicolon(char* line){
   return ary;
 }
 
+/*
+Takes a command as an input
+Seperates command at spaces and places each delimiter in a char* ary
+returns char* ary
+ */
 char ** parse_args_space(char* line){
   char** ary = calloc(20, sizeof(char*));
   int i = 0;
@@ -32,6 +42,12 @@ char ** parse_args_space(char* line){
   return ary;
 }
 
+/*
+Takes a command including > or >> as an input
+Seperates command at > or >>
+Replace stdout with file specified and creates or appends to that file the output of the command
+nothing returned
+ */
 void redirect_out(char** line, int mode){
   char** command = calloc(20, sizeof(char*));
   char* output = calloc(20, sizeof(char));
@@ -77,6 +93,12 @@ void redirect_out(char** line, int mode){
   }
 }
 
+/*
+Takes a command including < as input
+Seperates command at <
+Replaces stdin with file specified and executes command
+nothing returned
+ */
 void redirect_in(char** line){
   char** command = calloc(20, sizeof(char*));
   char* input = calloc(20, sizeof(char));
@@ -116,6 +138,12 @@ void redirect_in(char** line){
   }
 }
 
+/*
+Takes command with | as input
+Seperates command before and after | into 2 different char* arys
+Pipes, executes command before | and writes to fds[1], executes command after | using fds[0] as input
+nothing returned, terminates shell
+*/
 void redirect_pipe(char** line){
   char** command1 = calloc(20, sizeof(char*));
   char** command2 = calloc(20, sizeof(char*));
@@ -160,7 +188,22 @@ void redirect_pipe(char** line){
   }
 }
 
+static void sighandler(int signo){
+  if(signo == 2){
+    printf("Program exited due to SIGINT\n");
+    exit(0);
+  }
+}
+
+/*
+Infinitely loops until user exits or SIGINT is received
+Uses getcwd to get path to current dir, uses scanf to get user input
+Seperates input by ;, then seperates each parsed command by space
+Checks if command involves redirection, if it does call corresponding redirect function
+Else, execute command and loop
+ */
 int main(){
+  signal(SIGINT, sighandler);
   char** input;
   char** line;
   char command[256];
