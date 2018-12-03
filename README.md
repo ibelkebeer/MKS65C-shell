@@ -14,9 +14,7 @@ Redirecting using <<
 Piping causes program to terminate  
 
 # Function Headers
-''' code
-'''  
-'''  
+```  
 Takes a command line prompt as an input  
 Seperates line at ; and places each command in a char* ary  
 returns char* ary  
@@ -57,4 +55,4 @@ Pipes, executes command before | and writes to fds[1], executes command after | 
 nothing returned, terminates shell  
 
 void redirect_pipe(char** line)  
-'''
+```
