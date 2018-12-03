@@ -178,7 +178,6 @@ int main(){
   while(1){
     printf("%s$ ", getcwd(dir, sizeof(dir)));
     scanf("%[^\n]", command);
-    printf("%s\n", command);
     getchar();
     input = parse_args_semicolon(command);
     for(i = 0; i < 20; i ++){
@@ -227,6 +226,5 @@ int main(){
 	}
       }
     }
-    strcpy(command, "");
   }
 }
