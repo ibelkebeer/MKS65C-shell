@@ -1,19 +1,19 @@
 # MKS65C-shell
 
-#Features
+# Features
 Executes commands using fork
 Supports multiple commands seperated by ;
 Supports redirecting using >, >>, and <
 Supports piping using |
 
-#Attempted
+# Attempted
 Using pipe and continuing program
 Redirecting using <<
 
-#Bugs
+# Bugs
 Piping causes program to terminate
 
-#Function Headers
+# Function Headers
 '''
 Takes a command line prompt as an input
 Seperates line at ; and places each command in a char* ary
@@ -55,3 +55,4 @@ Pipes, executes command before | and writes to fds[1], executes command after | 
 nothing returned, terminates shell
 
 void redirect_pipe(char** line)
+'''
