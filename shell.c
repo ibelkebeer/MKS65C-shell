@@ -165,6 +165,7 @@ void redirect_pipe(char** line){
     int status;
     wait(&status);
   }
+  getchar();
 }
 
 int main(){
