@@ -71,7 +71,7 @@ void redirect_out(char** line, int mode){
   }
   int y;
   if(mode){
-    y = open(output, O_WRONLY | O_APPEND | O_CREAT, 0644);  
+    y = open(output, O_WRONLY | O_APPEND | O_CREAT, 0644);
   }else{
     y = open(output, O_WRONLY | O_CREAT, 0644);
   }
@@ -82,8 +82,8 @@ void redirect_out(char** line, int mode){
     if(!f){
       dup2(y, 1);
       if(execvp(command[0], command) == -1){
-	printf("Error: %s\n", strerror(errno));
-	execlp("rm", "rm", output, (char*)NULL);
+      	printf("Error: %s\n", strerror(errno));
+      	execlp("rm", "rm", output, (char*)NULL);
       }
     }else{
       int status;
@@ -120,7 +120,7 @@ void redirect_in(char** line){
     command[i-2] = line[i];
     i++;
   }
-  int y = open(input, O_RDONLY, 0644);  
+  int y = open(input, O_RDONLY, 0644);
   if(y == -1){
     printf("Error; %s\n", strerror(errno));
   }else{
@@ -128,7 +128,7 @@ void redirect_in(char** line){
     if(!f){
       dup2(y, 0);
       if(execvp(command[0], command) == -1){
-	printf("Error: %s\n", strerror(errno));
+	       printf("Error: %s\n", strerror(errno));
       }
     }else{
       int status;
@@ -145,47 +145,65 @@ Pipes, executes command before | and writes to fds[1], executes command after | 
 nothing returned, terminates shell
 */
 void redirect_pipe(char** line){
-  char** command1 = calloc(20, sizeof(char*));
-  char** command2 = calloc(20, sizeof(char*));
+  char** command1 = calloc(256, sizeof(char*));
+  char** command2 = calloc(256, sizeof(char*));
   int i = 0;
+  int index = 0;
   while(i < 256){
     if(line[i]){
       if(strcmp(line[i], "|")){
-	command1[i] = line[i];
+	       command1[index] = line[i];
+         index++;
       }else{
-	i++;
-	break;
+	       i++;
+	       break;
       }
     }
     i++;
   }
-  int y = i;
-  i = 0;
+  index = 0;
   while(i < 256){
-    if(line[y]){
-      command2[i] = line[y];
+    if(line[i]){
+      command2[index] = line[i];
+      index++;
     }
-    y++;
     i++;
   }
-  int fds[2];
-  if(pipe(fds) == -1){
-    printf("Error: %s\n", strerror(errno));
+  for(i = 0; i < 10; i ++){
+    printf("%s\n", command1[i]);
   }
+  for(i = 0; i < 10; i ++){
+    printf("%s\n", command2[i]);
+  }
+  /*
   int f = fork();
   if(f){
-    close(fds[0]);
-    dup2(fds[1], 1);
-    if(execvp(command1[0], command1) == -1){
+    int fds[2];
+    if(pipe(fds) == -1){
       printf("Error: %s\n", strerror(errno));
+    }
+    f = fork();
+    if(f){
+      close(fds[1]);
+      dup2(fds[0], 0);
+      close(fds[0]);
+      if(execvp(command2[0], command2) == -1){
+	       printf("Error: %s\n", strerror(errno));
+      }
+    }else{
+      close(fds[0]);
+      dup2(fds[1], 1);
+      close(fds[1]);
+      if(execvp(command1[0], command1) == -1){
+	       printf("Error: %s\n", strerror(errno));
+      }
     }
   }else{
-    close(fds[1]);
-    dup2(fds[0], 0);
-    if(execvp(command2[0], command2) == -1){
-      printf("Error: %s\n", strerror(errno));
-    }
+    wait(NULL);
+    getchar();
+    printf("\n");
   }
+  */
 }
 
 static void sighandler(int signo){
