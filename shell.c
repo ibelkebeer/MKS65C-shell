@@ -169,13 +169,6 @@ void redirect_pipe(char** line){
     }
     i++;
   }
-  for(i = 0; i < 10; i ++){
-    printf("%s\n", command1[i]);
-  }
-  for(i = 0; i < 10; i ++){
-    printf("%s\n", command2[i]);
-  }
-  /*
   int f = fork();
   if(f){
     int fds[2];
@@ -200,10 +193,7 @@ void redirect_pipe(char** line){
     }
   }else{
     wait(NULL);
-    getchar();
-    printf("\n");
   }
-  */
 }
 
 static void sighandler(int signo){
