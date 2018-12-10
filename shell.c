@@ -194,7 +194,6 @@ void redirect_pipe(char** line){
       wait(&status);
     }
   }
-  close(fds[0]);
 }
 
 static void sighandler(int signo){
