@@ -183,6 +183,7 @@ void redirect_pipe(char** line){
   }else{
     close(fds[1]);
     dup2(fds[0], 0);
+    wait(NULL);
     f = fork();
     if(f){
       if(execvp(command2[0], command2) == -1){
