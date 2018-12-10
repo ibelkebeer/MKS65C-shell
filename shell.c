@@ -181,6 +181,7 @@ void redirect_pipe(char** line){
     if(execvp(command1[0], command1) == -1){
 	      printf("Error: %s\n", strerror(errno));
     }
+    return;
   }else{
     close(fds[1]);
     dup2(fds[0], 0);
@@ -190,6 +191,7 @@ void redirect_pipe(char** line){
       if(execvp(command2[0], command2) == -1){
 	       printf("Error: %s\n", strerror(errno));
       }
+      return;
     }else{
       int status;
       wait(&status);
