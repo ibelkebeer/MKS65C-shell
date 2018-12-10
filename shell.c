@@ -169,30 +169,25 @@ void redirect_pipe(char** line){
     }
     i++;
   }
+  int fds[2];
+  if(pipe(fds) == -1){
+    printf("Error: %s\n", strerror(errno));
+  }
   int f = fork();
   if(f){
-    int fds[2];
-    if(pipe(fds) == -1){
-      printf("Error: %s\n", strerror(errno));
-    }
-    f = fork();
-    if(f){
-      close(fds[1]);
-      dup2(fds[0], 0);
-      close(fds[0]);
-      if(execvp(command2[0], command2) == -1){
-	       printf("Error: %s\n", strerror(errno));
-      }
-    }else{
-      close(fds[0]);
-      dup2(fds[1], 1);
-      close(fds[1]);
-      if(execvp(command1[0], command1) == -1){
-	       printf("Error: %s\n", strerror(errno));
-      }
+    close(fds[0]);
+    dup2(fds[1], 1);
+    close(fds[1]);
+    if(execvp(command2[0], command2) == -1){
+	      printf("Error: %s\n", strerror(errno));
     }
   }else{
-    wait(NULL);
+    close(fds[1]);
+    dup2(fds[0], 0);
+    close(fds[0]);
+    if(execvp(command1[0], command1) == -1){
+	      printf("Error: %s\n", strerror(errno));
+    }
   }
 }
 
@@ -226,48 +221,48 @@ int main(){
     input = parse_args_semicolon(command);
     for(i = 0; i < 256; i ++){
       if(input[i]){
-	line = parse_args_space(input[i]);
-	if(strcmp(line[0], "exit") == 0){
-	  return 0;
-	}else if(strcmp(line[0], "cd") == 0){
-	  if(chdir(line[1]) == -1){
-	    printf("Error: %s\n", strerror(errno));
-	  }
-	}else{
-	  run = 0;
-	  for(j = 0; j < 256; j ++){
-	    if(line[j]){
-	      if(!(strcmp(line[j],">"))){
-		redirect_out(line, 0);
-		run = 1;
-	      }
-	      if(!(strcmp(line[j],">>"))){
-		redirect_out(line, 1);
-		run = 1;
-	      }
-	      if(!(strcmp(line[j],"<"))){
-		redirect_in(line);
-		run = 1;
-	      }
-	      if(!(strcmp(line[j], "|"))){
-		redirect_pipe(line);
-		run = 1;
-	      }
-	    }
-	  }
-	  if(!run){
-	    int f = fork();
-	    if(!f){
-	      if(execvp(line[0], line) == -1){
-		printf("Error: %s\n", strerror(errno));
-	      }
-	      return 0;
-	    }else{
-	      int status;
-	      wait(&status);
-	    }
-	  }
-	}
+      	line = parse_args_space(input[i]);
+      	if(strcmp(line[0], "exit") == 0){
+      	  return 0;
+      	}else if(strcmp(line[0], "cd") == 0){
+      	  if(chdir(line[1]) == -1){
+      	    printf("Error: %s\n", strerror(errno));
+      	  }
+      	}else{
+      	  run = 0;
+      	  for(j = 0; j < 256; j ++){
+      	    if(line[j]){
+      	      if(!(strcmp(line[j],">"))){
+            		redirect_out(line, 0);
+            		run = 1;
+      	      }
+      	      if(!(strcmp(line[j],">>"))){
+            		redirect_out(line, 1);
+            		run = 1;
+      	      }
+      	      if(!(strcmp(line[j],"<"))){
+            		redirect_in(line);
+            		run = 1;
+      	      }
+      	      if(!(strcmp(line[j], "|"))){
+            		redirect_pipe(line);
+            		run = 1;
+      	      }
+      	    }
+      	  }
+      	  if(!run){
+      	    int f = fork();
+      	    if(!f){
+      	      if(execvp(line[0], line) == -1){
+      		        printf("Error: %s\n", strerror(errno));
+      	      }
+      	      return 0;
+      	    }else{
+      	      int status;
+      	      wait(&status);
+      	    }
+      	  }
+      	}
       }
     }
   }
