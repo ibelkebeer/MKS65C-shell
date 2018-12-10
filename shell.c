@@ -258,7 +258,9 @@ int main(){
                   wait(&status);
                 }
             		run = 1;
-                printf("\n");
+                printf("\n")
+                scanf("%[^\n]", command);
+                getchar();
       	      }
       	    }
       	  }
