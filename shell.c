@@ -250,7 +250,13 @@ int main(){
             		run = 1;
       	      }
       	      if(!(strcmp(line[j], "|"))){
-            		redirect_pipe(line);
+                int f = fork();
+                if(f){
+                  redirect_pipe(line);
+                }else{
+                  int status;
+                  wait(&status);
+                }
             		run = 1;
       	      }
       	    }
