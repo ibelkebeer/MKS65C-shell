@@ -177,14 +177,13 @@ void redirect_pipe(char** line){
   if(f){
     close(fds[0]);
     dup2(fds[1], 1);
-    close(fds[1]);
     if(execvp(command1[0], command1) == -1){
 	      printf("Error: %s\n", strerror(errno));
     }
   }else{
     close(fds[1]);
     dup2(fds[0], 0);
-    close(fds[0]);
+    wait(NULL);
     f = fork();
     if(f){
       if(execvp(command2[0], command2) == -1){
