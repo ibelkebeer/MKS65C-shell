@@ -184,16 +184,17 @@ void redirect_pipe(char** line){
     close(fds[1]);
     dup2(fds[0], 0);
     wait(NULL);
-    //f = fork();
-    //if(f){
+    f = fork();
+    if(f){
       if(execvp(command2[0], command2) == -1){
 	       printf("Error: %s\n", strerror(errno));
       }
-    //}else{
-    //  int status;
-    //  wait(&status);
-    //}
+    }else{
+      int status;
+      wait(&status);
+    }
   }
+  close(fds[0]);
 }
 
 static void sighandler(int signo){
