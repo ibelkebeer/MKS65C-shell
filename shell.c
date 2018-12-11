@@ -187,12 +187,11 @@ void redirect_pipe(char** line){
   }else{
     close(fds[1]);
     dup2(fds[0], STDIN_FILENO);
-    wait(NULL);
     //f = fork();
     //if(f){
-      if(execvp(command2[0], command2) == -1){
-	       printf("Error: %s\n", strerror(errno));
-      }
+    if(execvp(command2[0], command2) == -1){
+	      printf("Error: %s\n", strerror(errno));
+    }
     //}else{
     //  int status;
     //  wait(&status);
@@ -259,58 +258,11 @@ int main(){
                 int backup_out = dup(STDOUT_FILENO);
                 int f = fork();
                 if(f){
-                  char** command1 = calloc(256, sizeof(char*));
-                  char** command2 = calloc(256, sizeof(char*));
-                  int a = 0;
-                  int index = 0;
-                  while(a < 256){
-                    if(line[a]){
-                      if(strcmp(line[a], "|")){
-                	       command1[index] = line[a];
-                         index++;
-                      }else{
-                	       a++;
-                	       break;
-                      }
-                    }
-                    a++;
-                  }
-                  index = 0;
-                  while(a < 256){
-                    if(line[a]){
-                      command2[index] = line[a];
-                      index++;
-                    }
-                    a++;
-                  }
-                  int fds[2];
-                  if(pipe(fds) == -1){
-                    printf("Error: %s\n", strerror(errno));
-                  }
-                  f = fork();
-                  if(f){
-                    close(fds[0]);
-                    dup2(fds[1], STDOUT_FILENO);
-                    if(execvp(command1[0], command1) == -1){
-                	      printf("Error: %s\n", strerror(errno));
-                    }
-                  }else{
-                    close(fds[1]);
-                    dup2(fds[0], STDIN_FILENO);
-                    wait(NULL);
-                    //f = fork();
-                    //if(f){
-                      if(execvp(command2[0], command2) == -1){
-                	       printf("Error: %s\n", strerror(errno));
-                      }
-                    //}else{
-                    //  int status;
-                    //  wait(&status);
-                    //}
-                  }
+                  redirect_pipe(line);
                 }else{
                   int status;
                   wait(&status);
+                  printf("HI\n")
                 }
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
