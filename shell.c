@@ -262,12 +262,12 @@ int main(){
                   redirect_pipe(line);
                 }else{
                   int status;
-                  waitpid(-1, &status, WNOHANG);
+                  wait(&status);
                 }
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
                 dup2(backup_out, STDOUT_FILENO);
-                printf("\n");
+                //printf("\n");
       	      }
       	    }
       	  }
