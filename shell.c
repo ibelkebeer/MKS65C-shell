@@ -263,6 +263,7 @@ int main(){
                 }else{
                   int status;
                   wait(&status);
+                  printf("HI\n");
                 }
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
