@@ -198,6 +198,7 @@ void redirect_pipe(char** line){
     //  wait(&status);
     //}
   }
+  printf("NO\n");
 }
 
 static void sighandler(int signo){
