@@ -190,9 +190,9 @@ void redirect_pipe(char** line){
     wait(NULL);
     //f = fork();
     //if(f){
-    if(execvp(command2[0], command2) == -1){
-	      printf("Error: %s\n", strerror(errno));
-    }
+      if(execvp(command2[0], command2) == -1){
+	       printf("Error: %s\n", strerror(errno));
+      }
     //}else{
     //  int status;
     //  wait(&status);
@@ -261,12 +261,14 @@ int main(){
                 if(f){
                   redirect_pipe(line);
                 }else{
-                  wait(NULL);
+                  int status;
+                  wait(&status);
                 }
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
                 dup2(backup_out, STDOUT_FILENO);
-                //printf("\n");
+                getchar();
+                printf("\n");
       	      }
       	    }
       	  }
