@@ -198,7 +198,6 @@ void redirect_pipe(char** line){
     //  wait(&status);
     //}
   }
-  printf("NO\n");
 }
 
 static void sighandler(int signo){
@@ -267,6 +266,7 @@ int main(){
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
                 dup2(backup_out, STDOUT_FILENO);
+                fflush(STDOUT_FILENO);
       	      }
       	    }
       	  }
