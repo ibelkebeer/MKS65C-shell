@@ -262,7 +262,7 @@ int main(){
                   redirect_pipe(line);
                 }else{
                   int status;
-                  wait(&status);
+                  waitpid(-1, &status, WNOHANG);
                 }
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
