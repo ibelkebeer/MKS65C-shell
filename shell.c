@@ -187,11 +187,17 @@ void redirect_pipe(char** line){
   }else{
     close(fds[1]);
     dup2(fds[0], STDIN_FILENO);
+    wait(NULL);
+    f = fork;
+    if(f){
     //f = fork();
     //if(f){
     if(execvp(command2[0], command2) == -1){
 	      printf("Error: %s\n", strerror(errno));
     }
+  }else{
+    exit(2);
+  }
     //}else{
     //  int status;
     //  wait(&status);
