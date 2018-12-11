@@ -179,24 +179,18 @@ void redirect_pipe(char** line){
   }
   int f = fork();
   if(f){
-    close(fds[0]);
-    dup2(fds[1], STDOUT_FILENO);
-    if(execvp(command1[0], command1) == -1){
-	      printf("Error: %s\n", strerror(errno));
-    }
-  }else{
     close(fds[1]);
     dup2(fds[0], STDIN_FILENO);
     wait(NULL);
-    //f = fork();
-    //if(f){
-      if(execvp(command2[0], command2) == -1){
-	       printf("Error: %s\n", strerror(errno));
-      }
-    //}else{
-    //  int status;
-    //  wait(&status);
-    //}
+    if(execvp(command2[0], command2) == -1){
+      printf("Error: %s\n", strerror(errno));
+    }
+  }else{
+    close(fds[0]);
+    dup2(fds[1], STDOUT_FILENO);
+    if(execvp(command1[0], command1) == -1){
+      printf("Error: %s\n", strerror(errno));
+    }
   }
 }
 
