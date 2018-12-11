@@ -179,18 +179,18 @@ void redirect_pipe(char** line){
   }
   int f = fork();
   if(f){
-    close(fds[1]);
-    dup2(fds[0], STDIN_FILENO);
     int status;
     wait(&status);
-    //printf("YEET\n");
+    close(fds[1]);
+    dup2(fds[0], STDIN_FILENO);
+    printf("PART 3\n");
     if(execvp(command2[0], command2) == -1){
       printf("Error: %s\n", strerror(errno));
     }
   }else{
     close(fds[0]);
     dup2(fds[1], STDOUT_FILENO);
-    printf("YAW\n");
+    printf("PART 2\n");
     if(execvp(command1[0], command1) == -1){
       printf("Error: %s\n", strerror(errno));
     }
@@ -255,12 +255,12 @@ int main(){
                 int backup_out = dup(STDOUT_FILENO);
                 int f = fork();
                 if(f){
-                  //printf("HI\n");
+                  printf("PART 1\n");
                   redirect_pipe(line);
                 }else{
                   int status;
                   wait(&status);
-                  //printf("BYE\n");
+                  printf("PART 4\n");
                 }
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
