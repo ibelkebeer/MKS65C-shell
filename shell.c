@@ -268,8 +268,7 @@ int main(){
                 dup2(backup_in, STDIN_FILENO);
                 dup2(backup_out, STDOUT_FILENO);
                 getchar();
-                printf("\n");
-                getchar();
+                printf("\n ");
       	      }
       	    }
       	  }
