@@ -258,8 +258,8 @@ int main(){
                 int backup_out = dup(STDOUT_FILENO);
                 int f = fork();
                 if(f){
+                  printf("BYE\n");
                   redirect_pipe(line);
-                  printf("HI\n");
                 }else{
                   int status;
                   wait(&status);
