@@ -226,7 +226,6 @@ int main(){
   while(1){
     printf("%s$ ", getcwd(dir, sizeof(dir)));
     scanf("%[^\n]", command);
-    printf("%s\n", command);
     getchar();
     input = parse_args_semicolon(command);
     for(i = 0; i < 256; i ++){
@@ -260,6 +259,7 @@ int main(){
                 int f = fork();
                 if(f){
                   redirect_pipe(line);
+                  printf("HI\n");
                 }else{
                   int status;
                   wait(&status);
