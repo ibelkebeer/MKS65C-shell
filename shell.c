@@ -78,6 +78,7 @@ void redirect_out(char** line, int mode){
   if(y == -1){
     printf("Error; %s\n", strerror(errno));
   }else{
+    int backup = dup(1);
     int f = fork();
     if(!f){
       dup2(y, 1);
@@ -90,6 +91,7 @@ void redirect_out(char** line, int mode){
       wait(&status);
     }
     close(y);
+    dup2(backup, 1);
   }
 }
 
@@ -124,6 +126,7 @@ void redirect_in(char** line){
   if(y == -1){
     printf("Error; %s\n", strerror(errno));
   }else{
+    int backup = dup(0);
     int f = fork();
     if(!f){
       dup2(y, 0);
@@ -135,6 +138,7 @@ void redirect_in(char** line){
       wait(&status);
     }
     close(y);
+    dup2(backup, 0);
   }
 }
 
@@ -250,6 +254,8 @@ int main(){
             		run = 1;
       	      }
       	      if(!(strcmp(line[j], "|"))){
+                int backup_in = dup(0);
+                int backup_out = dup(1);
                 int f = fork();
                 if(f){
                   redirect_pipe(line);
@@ -258,9 +264,8 @@ int main(){
                   wait(&status);
                 }
             		run = 1;
-                printf("\n")
-                scanf("%[^\n]", command);
-                getchar();
+                dup2(backup_in, 0);
+                dup2(backup_out, 1);
       	      }
       	    }
       	  }
