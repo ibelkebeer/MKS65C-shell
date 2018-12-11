@@ -269,6 +269,7 @@ int main(){
                 dup2(backup_out, STDOUT_FILENO);
                 getchar();
                 printf("\n");
+                getchar();
       	      }
       	    }
       	  }
