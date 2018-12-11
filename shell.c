@@ -188,7 +188,7 @@ void redirect_pipe(char** line){
     close(fds[1]);
     dup2(fds[0], STDIN_FILENO);
     wait(NULL);
-    f = fork;
+    f = fork();
     if(f){
     //f = fork();
     //if(f){
