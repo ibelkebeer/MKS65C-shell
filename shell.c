@@ -132,6 +132,7 @@ void redirect_in(char** line){
       dup2(y, STDIN_FILENO);
       if(execvp(command[0], command) == -1){
 	       printf("Error: %s\n", strerror(errno));
+         exit(2);
       }
     }else{
       int status;
@@ -193,6 +194,7 @@ void redirect_pipe(char** line){
     printf("PART 2\n");
     if(execvp(command1[0], command1) == -1){
       printf("Error: %s\n", strerror(errno));
+      exit(2);
     }
   }
 }
@@ -265,8 +267,6 @@ int main(){
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
                 dup2(backup_out, STDOUT_FILENO);
-                getchar();
-                printf("\n");
       	      }
       	    }
       	  }
