@@ -188,6 +188,7 @@ void redirect_pipe(char** line){
       printf("Error: %s\n", strerror(errno));
     }
   }else{
+    printf("HELLOOOO?\n");
     close(fds[0]);
     dup2(fds[1], STDOUT_FILENO);
     printf("PART 2\n");
