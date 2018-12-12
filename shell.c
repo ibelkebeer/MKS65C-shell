@@ -220,7 +220,7 @@ int main(){
   int j;
   int run;
   while(1){
-    printf("%s$ ", getcwd(dir, sizeof(dir)));
+    printf("%s$ \n", getcwd(dir, sizeof(dir)));
     scanf("%[^\n]", command);
     getchar();
     input = parse_args_semicolon(command);
