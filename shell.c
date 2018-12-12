@@ -283,5 +283,6 @@ int main(){
       	}
       }
     }
+    strcpy(command, "");
   }
 }
