@@ -189,9 +189,7 @@ void redirect_pipe(char** line){
     }
   }else{
     close(fds[0]);
-    if(dup2(fds[1], STDOUT_FILENO) == -1){
-      printf("ERROR: %s\n", strerror(errno));  
-    }
+    printf("%d\n", dup2(fds[1], STDOUT_FILENO));
     printf("PART 2\n");
     if(execvp(command1[0], command1) == -1){
       printf("Error: %s\n", strerror(errno));
