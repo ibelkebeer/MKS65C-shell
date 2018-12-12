@@ -255,12 +255,12 @@ int main(){
                 int backup_out = dup(STDOUT_FILENO);
                 int f = fork();
                 if(f){
-                  printf("PART 1\n");
-                  redirect_pipe(line);
-                }else{
                   int status;
                   wait(&status);
                   printf("PART 4\n");
+                }else{
+                  printf("PART 1\n");
+                  redirect_pipe(line);
                 }
             		run = 1;
                 dup2(backup_in, STDIN_FILENO);
