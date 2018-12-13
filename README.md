@@ -6,12 +6,11 @@ Supports multiple commands seperated by ;
 Supports redirecting using >, >>, and <  
 Supports piping using |  
 
-# Attempted
-Using pipe and continuing program  
+# Attempted 
 Redirecting using <<  
 
 # Bugs
-Piping causes program to terminate  
+None known
 
 # Function Headers
 ```  
